@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_codigo5_movieapp/models/movie_model.dart';
 import 'package:flutter_codigo5_movieapp/services/api_service.dart';
-import 'package:http/http.dart' as http;
 
 import '../models/movie_gender_model.dart';
 import '../ui/widgets/item_filter_widget.dart';
@@ -17,11 +14,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-
   List<MovieGenderModel> movieGenderList = [];
   List<MovieModel> movieList = [];
   final APIService _apiService = APIService();
+
+  bool isSelected = false;
+  int indexFilter = 0;
 
   @override
   void initState() {
@@ -29,12 +27,32 @@ class _HomePageState extends State<HomePage> {
     getData();
   }
 
-  getData(){
-    _apiService.getMovies().then((value) => movieList = value);
-    _apiService.getGenderMovies().then((value) => movieGenderList = value);
-    setState(() {
-
+  getData() {
+    _apiService.getMovies().then((value) {
+      movieList = value;
+      setState(() {});
     });
+    _apiService.getGenderMovies().then((value) {
+      movieGenderList = value;
+      movieGenderList.insert(
+        0,
+        MovieGenderModel(id: 0, name: "All", select: true),
+      );
+      indexFilter = movieGenderList[0].id;
+      setState(() {});
+    });
+
+    setState(() {});
+  }
+
+  getMovieFilter(String genderMovie) {
+    _apiService.getMoviesByGner(genderMovie).then((value) {
+      movieList.clear();
+      movieList = value;
+      setState(() {});
+    });
+
+    setState(() {});
   }
 
   @override
@@ -108,8 +126,18 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: movieGenderList
-                        .map<Widget>((e) => ItemFilterWidget(
-                            movieGenderModel: e, isSelect: false))
+                        .map<Widget>(
+                          (e) => ItemFilterWidget(
+                            movieGenderModel: e,
+                            isSelect: indexFilter == e.id ? true : false,
+                            onTap: () {
+                              indexFilter = e.id;
+                              //print("${indexFilter.toString()}-${e.id}");
+                              getMovieFilter(e.id.toString());
+                              // setState(() {});
+                            },
+                          ),
+                        )
                         .toList(),
                   ),
                 ),

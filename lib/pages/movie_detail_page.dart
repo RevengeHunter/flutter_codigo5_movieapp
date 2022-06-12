@@ -11,6 +11,7 @@ import '../services/api_service.dart';
 import '../ui/widgets/chip_movie_widget.dart';
 import '../ui/widgets/item_review_widget.dart';
 import '../ui/widgets/person_detail_widget.dart';
+import '../ui/widgets/picture_detail_widget.dart';
 import '../ui/widgets/title_description_widget.dart';
 import '../utils/constants.dart';
 
@@ -60,6 +61,15 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       context: context,
       builder: (BuildContext context) => PersonDetailWidget(
         personId: idPerson,
+      ),
+    );
+  }
+
+  showPicture(String idPicture) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => PictureDetailWidget(
+        pictureURLId: idPicture,
       ),
     );
   }
@@ -298,12 +308,25 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                               childAspectRatio: 1.5,
                               padding: EdgeInsets.zero,
                               children: movieImageModelList
-                                  .map((e) => Container(
-                                margin: EdgeInsets.symmetric(horizontal: 5.0,vertical: 5.0),
-                                          child: Image.network(
-                                        "$pathImage${e.filePath}",
-                                        fit: BoxFit.cover,
-                                      )))
+                                  .map(
+                                    (e) => GestureDetector(
+                                      onDoubleTap: (){
+                                        print("$pathImage${e.filePath}");
+                                        showPicture("$pathImage${e.filePath}");
+                                        setState(() {
+
+                                        });
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 5.0, vertical: 5.0),
+                                        child: Image.network(
+                                          "$pathImage${e.filePath}",
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  )
                                   .toList(),
                             ),
                             const SizedBox(

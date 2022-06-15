@@ -41,7 +41,7 @@ class _PictureDetailWidgetState extends State<PictureDetailWidget> {
             child: PinchZoom(
               child: Image.network(
                 "${widget.pictureURLId}",
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
               ),
               resetDuration: const Duration(milliseconds: 1000),
               maxScale: 10,
